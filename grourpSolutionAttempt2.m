@@ -1,0 +1,74 @@
+clear;clc
+%% Import random data
+c = readmatrix("ProblemRankData.csv");
+
+[students, groups] = size(c);
+% p students and q groups
+
+%% solving using transportation code
+
+total=students*groups;
+
+% One student can only do one project
+
+A_circ = zeros(1, total);
+A_circ(1:groups) = 1;
+
+ASupply = A_circ;
+for i = 1:students-1
+    A_new = circshift(A_circ, i*groups);
+    ASupply = [ASupply; A_new];
+end
+
+bSupply = ones(1,students);
+
+% Each project can have minGroup and a maxGroup size
+minGroup = 4;
+maxGroup = 10;
+
+ADemand = eye(groups);
+ADemand = repmat(ADemand, 1, students);
+
+bMinGroup= minGroup * ones(1,groups);
+bMaxGroup= maxGroup * ones(1,groups);
+
+A = [-ADemand; ADemand; ASupply];
+b = [ -bMinGroup'; bMaxGroup'; bSupply'];
+
+intcon = ones(students,1);
+
+% equality: 
+A_eq = ASupply;
+b_eq = bSupply';
+
+% bounds
+lb = zeros(total,1);
+ub = ones(total,1);
+
+[x, FVAL] = intlinprog(c,intcon,A,b,[],[],lb,ub);
+X = reshape(x,students,groups);
+
+% 
+%% visualising solution:
+
+% for column in x find how many students in each group
+
+group_totals = [];
+for i = 1:groups
+    group_totals(i) = sum(X(:,i));
+end
+close all
+figure
+bar(groups, group_totals)
+
+sum(group_totals)  
+% FVAL
+
+% % % % % % 
+% why why why
+% does this code not give me the correct solution???
+
+
+choices_mat = X.*c;
+choices_mat
+

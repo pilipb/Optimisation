@@ -6,7 +6,7 @@ c = readmatrix("ProblemRankData.csv");
 
 %% solving using transportation code
 
-circshift
+
 
 total=students*groups;
 I=[1:students]'; K=[1:total]';
@@ -40,9 +40,9 @@ b_eq = bSupply;
 lb = zeros(total,1);
 ub = ones(total,1);
 
-[x, Fval] = intlinprog(c,intcon,A,b,A_eq,b_eq,[],[]);
+[x, Fval] = intlinprog(c,intcon,A,b,A_eq,b_eq,[],[])
 % [x, FVAL] = intlinprog(c,intcon,A,b,[],[],[],ub);
-% X=reshape(x,students,groups)
+X=reshape(x,students,groups)
 
 
 %% visualising solution:
